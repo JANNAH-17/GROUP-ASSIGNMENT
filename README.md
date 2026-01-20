@@ -1,9 +1,6 @@
-# GROUP-ASSIGNMENT
-# 👋 Hello Sir! Welcome to Our Project
+# GROUP-ASSIGNMENT👋 
 
-Ini adalah projek **Socket Programming** bagi subjek *Network Programming*.
----
-Projek ini dijayakan oleh dua orang:
+ITT440 NETWORK PROGRAMMING- DOCKER
 
 * **Nurjannah Nadhirah binti Yazib** 👩‍💻
  **C Programming** (Client & Server).
