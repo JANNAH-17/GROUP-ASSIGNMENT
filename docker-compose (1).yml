@@ -1,0 +1,72 @@
+services:
+  # --- DATABASE ---
+  db:
+    image: mysql:5.7
+    environment:
+      # Matches the password in your C and Python code
+      MYSQL_ROOT_PASSWORD: root
+      # Matches the database name in your SQL and code
+      MYSQL_DATABASE: project_db
+    ports:
+      - "3306:3306"
+    volumes:
+      # Automatically runs your init.sql when the container starts fresh
+      - ./init.sql:/docker-entrypoint-initdb.d/init.sql
+    networks:
+      - default
+
+  # --- PHPMYADMIN (Database Interface) ---
+  phpmyadmin:
+    image: phpmyadmin/phpmyadmin
+    depends_on:
+      - db
+    ports:
+      - "8081:80"
+    environment:
+      PMA_HOST: db
+      # ADD THIS LINE TO FIX THE COOKIE ERROR:
+      PMA_USER_CONFIG_BASE64: "c2Vzc2lvbi5jb29raWVfc2VjdXJlID0gMA=="
+    networks:
+      - default
+
+  # --- SERVERS ---
+  c-server:
+    build: ./C.server
+    depends_on:
+      - db
+    ports:
+      # Host Port 8082 -> Container Port 8080 (defined in main.c)
+      - "8082:8080"
+    networks:
+      - default
+
+  python-server:
+    build: ./python-server
+    depends_on:
+      - db
+    ports:
+      # Host Port 8083 -> Container Port 8080 (defined in server.py)
+      - "8083:8080"
+    networks:
+      - default
+
+  # --- CLIENTS ---
+  c-client:
+    build: ./C.client
+    depends_on:
+      - c-server
+    networks:
+      - default
+    tty: true
+
+  python-client:
+    build: ./python-client
+    depends_on:
+      - python-server
+    networks:
+      - default
+    tty: true
+
+networks:
+  default:
+    driver: bridge
